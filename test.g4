@@ -1,6 +1,7 @@
 grammar test;
 input: EOL* mnemonic* EOF;
-mnemonic: inst WS* EOL* | inst WS+ (operand WS*)* EOL*;
+mnemonic: (inst WS+ (operand WS*)+ | inst WS*) EOL?
+        | emptyline;
 inst: TEXT ('_' TEXT)? SUFFIX? | TEXT ('*' | OPERATOR)? SUFFIX?;
 operand: device | local_device | wordbit | local_wordbit
         | indirect | local_indirect
@@ -8,7 +9,7 @@ operand: device | local_device | wordbit | local_wordbit
         | literal | label
         ;
 indirect_suffix: (INT | MNM_DEC | MNM_HEX | device);
-
+emptyline: WS* EOL;
 device: TEXT INT;
 wordbit: device '.' INT;
 indirect: device ':' indirect_suffix;
