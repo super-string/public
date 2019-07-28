@@ -2,37 +2,42 @@ grammar test;
 input: EOL* mnemonic* EOF;
 mnemonic: (inst WS+ (operand WS*)+ | inst WS*) EOL?
         | emptyline;
-inst: TEXT ('_' TEXT)? SUFFIX? | TEXT operator? SUFFIX?;
+inst_suffix: SUFFIX;
+inst: TEXT (UNDERBAR TEXT)? inst_suffix? | TEXT operator? inst_suffix?;
 operand: device | local_device | wordbit | local_wordbit
         | indirect | local_indirect
         | ref | local_ref | direct_val | unknown_dev
-        | literal | label
+        | literal | label | local_label
         ;
 indirect_suffix: (INT | MNM_DEC | MNM_HEX | device);
 operator: OPERATOR | ASTARISK;//「*」をOPERATORに含めるとおかしくなる
 emptyline: WS* EOL;
 device: TEXT INT;
-wordbit: device '.' INT;
-indirect: device ':' indirect_suffix;
-ref: ASTARISK device;
 local_device: ATMARK device;
-local_wordbit: local_device '.' INT;
-local_indirect:  local_device ':' indirect_suffix;
+wordbit: device DOT INT;
+local_wordbit: local_device DOT INT;
+indirect: device COLON indirect_suffix;
+local_indirect:  local_device COLON indirect_suffix;
+ref: ASTARISK device;
 local_ref: ASTARISK local_device;
+label: UNDERBAR? TEXT;
+local_label: ATMARK label;
 direct_val: INT | MNM_DEC | MNM_HEX;
 literal: LITERAL;
-label: TEXT;
 unknown_dev: '?'+;
 
 MNM_DEC: (K | '#') '-'? (INT+ | INT+ '.' + INT+ | '.' + INT+ | INT+ '.');
 MNM_HEX: (H | '$') [0-9a-fA-F]+;
 ASTARISK: '*';
+COLON: ':';
+DOT: '.';
+ATMARK: '@';
+UNDERBAR: '_';
 OPERATOR: '+' | '-' | '/' | '>' | '>>' | '<' | '<<' | '|' | '=' | '~';
-SUFFIX: '.' TEXT;
+SUFFIX: DOT TEXT;
 LITERAL: '"' TEXT*? '"';
 WS: ' ';
 EOL: '\r' | '\n' | '\r\n';
-ATMARK: '@';
 
 INT: [0-9]+;
 TEXT: [a-zA-Z]+;

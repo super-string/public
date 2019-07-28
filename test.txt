@@ -1,6 +1,10 @@
-CAL* #1.2
+CAL~ #1.2
+
+ld.S
 SMOV.T "abc" "def"
-hoge globalLabel
+LD.U globalLabel dm10
+LD.U @localLabel dm10
+MC _Main
 U_WRIT.U DM1000 HFF
 LD.DF DM10:Z1 ???
 LD DM10:HFF
