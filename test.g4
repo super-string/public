@@ -5,21 +5,21 @@ mnemonic: (inst WS+ (operand WS*)+ | inst WS*) EOL?
 inst_suffix: SUFFIX;
 inst: TEXT (UNDERBAR TEXT)? inst_suffix? | TEXT operator? inst_suffix?;
 operand: device | local_device | wordbit | local_wordbit
-        | indirect | local_indirect
-        | ref | local_ref | direct_val | unknown_dev
+        | index | local_index
+        | indirect | local_indirect | direct_val | unknown_dev
         | literal | label | local_label
         ;
-indirect_suffix: (INT | MNM_DEC | MNM_HEX | device);
+index_suffix: (INT | MNM_DEC | MNM_HEX | device);
 operator: OPERATOR | ASTARISK;//「*」をOPERATORに含めるとおかしくなる
 emptyline: WS* EOL;
 device: TEXT INT;
 local_device: ATMARK device;
 wordbit: device DOT INT;
 local_wordbit: local_device DOT INT;
-indirect: device COLON indirect_suffix;
-local_indirect:  local_device COLON indirect_suffix;
-ref: ASTARISK device;
-local_ref: ASTARISK local_device;
+index: device COLON index_suffix;
+local_index:  local_device COLON index_suffix;
+indirect: ASTARISK device;
+local_indirect: ASTARISK local_device;
 label: UNDERBAR? TEXT;
 local_label: ATMARK label;
 direct_val: INT | MNM_DEC | MNM_HEX;
