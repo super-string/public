@@ -1,6 +1,6 @@
 grammar test;
 input: EOL*? (mnemonic (EOL+ mnemonic)*)? EOL? EOF;
-mnemonic: inst WS+ (operand (WS+ operand)*)+ | inst WS*;
+mnemonic: inst (WS+ operand (WS+ operand)*)+ | inst WS* | comment;
 inst: IDENT (OPERATOR | ASTERISK)? SUFFIX?;
 operand: indirect
         | index_ref
@@ -12,7 +12,7 @@ operand: indirect
 device: UINT | IDENT REAL_DOT_DIGIT?;
 direct_value: REAL_FULL | REAL_DIGIT_DOT | REAL_DOT_DIGIT | DEC | SINT | UINT | HEX | FLOAT | EXP;
 local_or_tm: (AT | SHARP) device;
-indirect: ASTERISK ((UINT | IDENT) | index_ref | local_or_tm);
+indirect: ASTERISK (IDENT | index_ref | local_or_tm);
 index_ref: ((UINT | IDENT) | local_or_tm) COLON (DEC | SINT | UINT | IDENT);
 comment: COMMENT;
 
