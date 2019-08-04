@@ -1,5 +1,5 @@
 grammar test;
-input: EOL*? (mnemonic ((EOL mnemonic)*)?) EOF;
+input: EOL*? (mnemonic ((EOL* mnemonic)*)?) EOF;
 mnemonic: inst | inst WS+ (operand (WS operand)*)?;
 operand: indirect | device | direct_value | LITERAL;
 inst: TEXT (OPERATOR | ASTERISK)? SUFFIX?;                  //数字を含んだ命令後あったはずだけど放置
