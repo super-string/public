@@ -1,6 +1,69 @@
+BMOV ??? DM0 ???
+LD @1:-1
+LD 1:-1
+ld #tm0.1
+ld *@dm0:Z1
+ld *dm0:#1
+ld @dm0:Z1
+ld @dm0:#1
+ld @dm0.0
+lda *@dm0
+ld *0
+ld *R0
+ld @0
+ld @R0
+ld @dm0
+ld *dm0
+LD DM0.0
+LD= DM0  0
+LD<> DM0  0
+LD< DM0  0
+LD> DM0  0
+LD<= DM0  0 ???
+LD>= DM0  0
+LD+ DM0  0
+LD- DM0  0
+LD* DM0  0
+LD/ DM0  0
+LD^ DM0  0
+LD>> DM0  0
+LD<< DM0  0
+LDA.F #-.1e+3
+LDA.F #+1.2e-3
+LDA.F +1.2e+3
+LDA.F K.1e2
+LDA.F #1.e2
+LDA.F 1.e2
+LDA.F K1.1e2
+LDA.F 1.1e2
+LDA.F 1e2
+LDA.F K.1
+LDA.F .1
+LDA.F #1.
+LDA.F 1.
+LDA.F #+1.23
+LDA.F -1.23
+LDA.F 1.23
+LDA.F K1.23
+LDA DM10:1
+LDA DM10:#1
+LDA DM10:#-1
+LDA +1
+LDA #+1
+LDA K-1
+LDA HFF
+LDA H1
+LDA $1
+LDA K1
+LD 1
+LDA.DF DM0:Z1
+LDA.DF DM0:#1
+LD R0_0
+LD X0
+LD X300F
 CAL~ #1.2
 
-ld.S
+ld.S D0
 SMOV.T "abc" "def"
 LD.U globalLabel dm10
 LD.U @localLabel dm10
@@ -19,3 +82,4 @@ LD @DM1000
 CON
 LD DM1000.0
 LD @DM1000.0
+LD R0

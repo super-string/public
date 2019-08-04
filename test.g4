@@ -1,67 +1,47 @@
 grammar test;
-input: EOL* mnemonic* EOF;
-mnemonic: (inst WS+ (operand WS*)+ | inst WS*) EOL?
-        | emptyline;
-inst_suffix: SUFFIX;
-inst: TEXT (UNDERBAR TEXT)? inst_suffix? | TEXT operator? inst_suffix?;
-operand: device | local_device | wordbit | local_wordbit
-        | index | local_index
-        | indirect | local_indirect | direct_val | unknown_dev
-        | literal | label | local_label
-        ;
-index_suffix: (INT | MNM_DEC | MNM_HEX | device);
-operator: OPERATOR | ASTARISK;//「*」をOPERATORに含めるとおかしくなる
-emptyline: WS* EOL;
-device: TEXT INT;
-local_device: ATMARK device;
-wordbit: device DOT INT;
-local_wordbit: local_device DOT INT;
-index: device COLON index_suffix;
-local_index:  local_device COLON index_suffix;
-indirect: ASTARISK device;
-local_indirect: ASTARISK local_device;
-label: UNDERBAR? TEXT;
-local_label: ATMARK label;
-direct_val: INT | MNM_DEC | MNM_HEX;
-literal: LITERAL;
-unknown_dev: '?'+;
+input: EOL* (mnemonic EOL*)* EOF;
+mnemonic: inst
+        | inst WS+ ((indirect | device | direct_value | LITERAL) WS*)*;
+inst: TEXT (OPERATOR | ASTERISK)? SUFFIX?;
+device: AT?                             //ローカル
+            ( TEXT UINT TEXT UINT?
+            | SHARP? TEXT (UINT | REAL)                     //Tだけ特殊
+            | TEXT                                          //label, system label
+            | UINT                                          //数値のみの直値は暗黙的にR
+            ) index_ref?                //インデックス修飾
+       | QUESTION+;                     //???デバイス
+indirect: ASTERISK device;              //関節参照
+index_ref: COLON (DEC | HEX | SINT | device);// UINT > deviceでないと1がR1で解釈される
+direct_value: DEC | HEX | SINT | REAL | FLOAT | EXP;       //直値
 
-MNM_DEC: (K | '#') '-'? (INT+ | INT+ '.' + INT+ | '.' + INT+ | INT+ '.');
-MNM_HEX: (H | '$') [0-9a-fA-F]+;
-ASTARISK: '*';
-COLON: ':';
-DOT: '.';
-ATMARK: '@';
-UNDERBAR: '_';
-OPERATOR: '+' | '-' | '/' | '>' | '>>' | '<' | '<<' | '|' | '=' | '~';
+UINT: DIGIT;
+SINT: (PLUS | MINUS) (DIGIT | REAL);
+DEC: (K | SHARP) (SINT | UINT | EXP);
+HEX: (H | '$') [0-9a-fA-F]+;
+
+FLOAT: (K | SHARP) (EXP | REAL);
+REAL: DIGIT DOT DIGIT | DIGIT DOT | DOT DIGIT;
+EXP: DIGIT E DIGIT | REAL E DIGIT | SINT E SINT | REAL E SINT;
+
 SUFFIX: DOT TEXT;
-LITERAL: '"' TEXT*? '"';
-WS: ' ';
-EOL: '\r' | '\n' | '\r\n';
+LITERAL: DQ (DQ DQ | N_DQ)* DQ;
+TEXT: DIGIT | [_a-zA-Z]+;
+AT: '@';
+SHARP: '#';
+QUESTION: '?';
+COLON: ':';
+OPERATOR: '~' | '=' | '<<' | '>>' | '<>' | '<' | '>' | '|' | '<=' | '>=' | PLUS | MINUS | '/' | '^';
+ASTERISK: '*';
 
-INT: [0-9]+;
-TEXT: [a-zA-Z]+;
-fragment A: [Aa];
-fragment B: [Bb];
-fragment C: [Cc];
-fragment D: [Dd];
+EOL: '\r' | '\n' | '\r\n';
+WS: ' ';
+
 fragment E: [Ee];
-fragment F: [Ff];
-fragment G: [Gg];
 fragment H: [Hh];
-fragment I: [Ii];
-fragment J: [Jj];
 fragment K: [Kk];
-fragment L: [Ll];
-fragment M: [Mm];
-fragment N: [Nn];
-fragment O: [Oo];
-fragment Q: [Qq];
-fragment S: [Ss];
-fragment T: [Tt];
-fragment U: [Uu];
-fragment V: [Vv];
-fragment W: [Ww];
-fragment X: [Xx];
-fragment Y: [Yy];
-fragment Z: [Zz];
+fragment DIGIT: [0-9]+;
+fragment PLUS: '+';
+fragment MINUS: '-';
+fragment DOT: '.';
+fragment DQ: '"';
+fragment N_DQ: ~["];
