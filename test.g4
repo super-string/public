@@ -1,6 +1,7 @@
 grammar test;
 input: EOL* (mnemonic EOL*)* EOF;
-mnemonic: inst | inst WS+ ((indirect | device | direct_value | LITERAL) WS*)*;
+mnemonic: inst | inst WS+ (operand (WS operand)*)?;
+operand: indirect | device | direct_value | LITERAL;
 inst: TEXT (OPERATOR | ASTERISK)? SUFFIX?;                  //数字を含んだ命令後あったはずだけど放置
 device: AT?                                                 //ローカル
             ( TEXT UINT TEXT (UINT | REAL)?                 //R0_0, Y000F, D100F.0
@@ -18,8 +19,8 @@ SINT: (PLUS | MINUS) (DIGIT | REAL);
 DEC: (K | SHARP) (SINT | UINT | EXP);
 HEX: (H | '$') [0-9a-fA-F]+;
 FLOAT: (K | SHARP) (EXP | REAL);
-REAL: DIGIT DOT DIGIT | DIGIT DOT | DOT DIGIT;
-EXP: DIGIT E DIGIT | REAL E DIGIT | SINT E SINT | REAL E SINT;
+REAL: DIGIT? DOT DIGIT?;
+EXP: (DIGIT | REAL | SINT) E (DIGIT | SINT);
 
 SUFFIX: DOT TEXT;
 LITERAL: DQ (DQ DQ | N_DQ)* DQ;
