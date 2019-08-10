@@ -1,19 +1,41 @@
 grammar test;
-input: EOL*? (mnemonic (EOL+ mnemonic)*)? EOL? EOF;
-mnemonic: inst (WS+ operand (WS+ operand)*)+ | inst WS* | comment;
+input
+        : EOL*? (mnemonic (EOL+ mnemonic)*)? EOL? EOF;
+mnemonic
+        : inst (WS+ operand (WS+ operand)*)+            #mnemonic_inst
+        | inst WS*                                      #mnemonic_instonly
+        | comment                                       #mnemonic_comment
+        ;
 inst: IDENT (OPERATOR | ASTERISK)? SUFFIX?;
-operand: indirect
-        | index_ref
-        | device
-        | local_or_tm
-        | direct_value
-        | QUESTION+
-        | LITERAL;
-device: UINT | IDENT REAL_DOT_DIGIT?;
-direct_value: REAL_FULL | REAL_DIGIT_DOT | REAL_DOT_DIGIT | DEC | SINT | UINT | HEX | FLOAT | EXP;
-local_or_tm: (AT | SHARP) device;
-indirect: ASTERISK (IDENT | index_ref | local_or_tm);
-index_ref: ((UINT | IDENT) | local_or_tm) COLON (DEC | SINT | UINT | IDENT);
+operand
+        : indirect                                      #ope_indirect
+        | index_ref                                     #ope_indexref
+        | device                                        #ope_device
+        | local                                         #ope_local
+        | tm                                            #ope_tm
+        | direct_value                                  #ope_direct
+        | QUESTION+                                     #ope_unknown
+        | LITERAL                                       #ope_literal
+        ;
+device
+        : UINT
+        | IDENT REAL_DOT_DIGIT?
+        ;
+direct_value
+        : REAL_FULL                                     #dv_real
+        | REAL_DIGIT_DOT                                #dv_real
+        | REAL_DOT_DIGIT                                #dv_real
+        | DEC                                           #dv_dec
+        | SINT                                          #dv_dec
+        | UINT                                          #dv_dec
+        | HEX                                           #dv_dec
+        | FLOAT                                         #dv_real
+        | EXP                                           #dev_exp
+        ;
+local: AT device;
+tm: SHARP device;
+indirect: ASTERISK (IDENT | index_ref | local);
+index_ref: ((UINT | IDENT) | local) COLON (DEC | SINT | UINT | IDENT);
 comment: COMMENT;
 
 UINT: DIGIT;
@@ -34,7 +56,7 @@ COMMENT: SEMICOLON NOT_EOL+;
 AT: '@';
 QUESTION: '?';
 COLON: ':';
-OPERATOR: '~' | '=' | '<<' | '>>' | '<>' | '<' | '>' | '|' | '<=' | '>=' | PLUS | MINUS | '/' | '^' | '&';
+OPERATOR:   '~' | '=' | '<<' | '>>' | '<>' | '<' | '>' | '|' | '<=' | '>=' | PLUS | MINUS | '/' | '^' | '&';
 ASTERISK: '*';
 SHARP: '#';
 
