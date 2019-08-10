@@ -59,6 +59,7 @@ namespace PlcSim
 
         public void DisplayCurrentDevice()
         {
+            Console.WriteLine("----------------------------------");
             foreach (var key in BitDevices.Keys)
             {
                 Console.WriteLine(key + "\t" + (BitDevices[key] ? "ON" : "OFF"));

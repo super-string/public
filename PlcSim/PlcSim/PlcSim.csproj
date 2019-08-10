@@ -54,6 +54,7 @@
     <Compile Include="Operand\DeviceAttribute.cs" />
     <Compile Include="Operand\DeviceCode.cs" />
     <Compile Include="Operand\IOperand.cs" />
+    <Compile Include="Operand\PrimitiveValue.cs" />
     <Compile Include="Plc.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

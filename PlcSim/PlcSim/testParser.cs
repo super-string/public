@@ -1116,7 +1116,13 @@ public partial class testParser : Parser {
 	}
 
 	public partial class Index_refContext : ParserRuleContext {
+		public IToken dev;
+		public IToken op;
+		public IToken @ref;
 		public ITerminalNode COLON() { return GetToken(testParser.COLON, 0); }
+		public LocalContext local() {
+			return GetRuleContext<LocalContext>(0);
+		}
 		public ITerminalNode DEC() { return GetToken(testParser.DEC, 0); }
 		public ITerminalNode SINT() { return GetToken(testParser.SINT, 0); }
 		public ITerminalNode[] UINT() { return GetTokens(testParser.UINT); }
@@ -1126,9 +1132,6 @@ public partial class testParser : Parser {
 		public ITerminalNode[] IDENT() { return GetTokens(testParser.IDENT); }
 		public ITerminalNode IDENT(int i) {
 			return GetToken(testParser.IDENT, i);
-		}
-		public LocalContext local() {
-			return GetRuleContext<LocalContext>(0);
 		}
 		public Index_refContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -1165,9 +1168,10 @@ public partial class testParser : Parser {
 			case IDENT:
 				{
 				State = 130;
+				_localctx.dev = TokenStream.LT(1);
 				_la = TokenStream.LA(1);
 				if ( !(_la==UINT || _la==IDENT) ) {
-				ErrorHandler.RecoverInline(this);
+					_localctx.dev = ErrorHandler.RecoverInline(this);
 				}
 				else {
 					ErrorHandler.ReportMatch(this);
@@ -1183,11 +1187,12 @@ public partial class testParser : Parser {
 			default:
 				throw new NoViableAltException(this);
 			}
-			State = 134; Match(COLON);
+			State = 134; _localctx.op = Match(COLON);
 			State = 135;
+			_localctx.@ref = TokenStream.LT(1);
 			_la = TokenStream.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << UINT) | (1L << SINT) | (1L << DEC) | (1L << IDENT))) != 0)) ) {
-			ErrorHandler.RecoverInline(this);
+				_localctx.@ref = ErrorHandler.RecoverInline(this);
 			}
 			else {
 				ErrorHandler.ReportMatch(this);

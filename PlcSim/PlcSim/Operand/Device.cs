@@ -5,13 +5,18 @@ namespace PlcSim.Operand
     public class Device : IOperand
     {
         public DeviceCode Code { get; }
-        public uint Address { get; }
+        public uint Address { get; private set; }
         public DevAttribute Attribute { get; private set; }
 
         private Device(DeviceCode code, uint address)
         {
             Code = code;
             Address = address;
+        }
+
+        public void Increment(int value)
+        {
+            Address = (uint)(Address + value);
         }
 
         public static bool TryParse(string input, out Device device)

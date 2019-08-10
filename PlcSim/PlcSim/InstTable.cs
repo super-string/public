@@ -32,10 +32,21 @@ namespace PlcSim
         private static Dictionary<string, InstAttribute> _table = new Dictionary<string, InstAttribute>
         {
             {"LD", new InstAttribute { Name = "LD", Type = DevType.Bit, Dir = Direction.In, AcceptArgNum = 1, Func = Load } },
+            {"LDB", new InstAttribute { Name = "LDB", Type = DevType.Bit, Dir = Direction.In, AcceptArgNum = 1, Func = LoadB } },
+            {"OUT", new InstAttribute { Name = "OUT", Type = DevType.Bit, Dir = Direction.Out, AcceptArgNum = 1, Func = Out } },
             {"MOV", new InstAttribute { Name = "MOV", Type = DevType.Word, Dir = Direction.Out, AcceptArgNum = 2, Func = Move } },
         };
 
         private static bool Load(Plc plc, IEnumerable<IOperand> operands)
+        {
+            return LoadCore(plc, operands, false);
+        }
+        private static bool LoadB(Plc plc, IEnumerable<IOperand> operands)
+        {
+            return LoadCore(plc, operands, true);
+        }
+
+        private static bool LoadCore(Plc plc, IEnumerable<IOperand> operands, bool b)
         {
             if (operands.Count() != 1)
                 throw new ArgumentOutOfRangeException("operands");
@@ -48,7 +59,24 @@ namespace PlcSim
             if (string.IsNullOrEmpty(plcDevice))
                 throw new InvalidOperationException();
 
-            return plc.BitDevices[plcDevice];
+            return b ? !plc.BitDevices[plcDevice] : plc.BitDevices[plcDevice];
+        }
+
+        private static bool Out(Plc plc, IEnumerable<IOperand> operands)
+        {
+            if (operands.Count() != 1)
+                throw new ArgumentOutOfRangeException("operands");
+
+            var device = operands.First() as Device;
+            if (device == null)
+                throw new InvalidCastException();
+
+            var plcDevice = plc.FindKey(device);
+            if (string.IsNullOrEmpty(plcDevice))
+                throw new InvalidOperationException();
+
+            plc.BitDevices[plcDevice] = true;
+            return true;
         }
 
         private static bool Move(Plc plc, IEnumerable<IOperand> operands)

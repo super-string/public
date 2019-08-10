@@ -44,7 +44,6 @@ namespace PlcSim
             return Result.CreateSuccess(null);
         }
 
-        #region mnemonic
         public override Result VisitMnemonic_instonly([NotNull] testParser.Mnemonic_instonlyContext context)
         {
             return base.VisitMnemonic_instonly(context);
@@ -98,9 +97,7 @@ namespace PlcSim
         {
             return base.VisitMnemonic_comment(context);
         }
-        #endregion
 
-        #region inst
         public override Result VisitInst([NotNull] testParser.InstContext context)
         {
             var ident = context.IDENT();
@@ -119,12 +116,35 @@ namespace PlcSim
 
             return Result.CreateSuccess(new Instruction { Name = inst, Attribute = InstTable.Table[inst] });
         }
-        #endregion
 
-        #region operand
-        #endregion
+        public override Result VisitOpe_direct([NotNull] testParser.Ope_directContext context)
+        {
+            var ret = Visit(context.direct_value());
+            return base.VisitOpe_direct(context);
+        }
 
-        #region device
+        public override Result VisitIndex_ref([NotNull] testParser.Index_refContext context)
+        {
+            var dev = context.dev.Text.ToUpper();
+            Device device;
+            if (!Device.TryParse(dev, out device))
+            {
+                return Result.CreateError("解析できなかったデバイス:" + dev);
+            }
+            var @ref = context.@ref.Text.ToUpper();
+            if (@ref.StartsWith("#") || @ref.StartsWith("k", System.StringComparison.InvariantCultureIgnoreCase))
+            {
+                int indexValue;
+                if (!int.TryParse(@ref.TrimStart('#', 'k', 'K'), out indexValue))
+                {
+                    return Result.CreateError("修飾部が解析できなかった:" + @ref);
+                }
+                device.Increment(indexValue);
+                return Result.CreateSuccess(device);
+            }
+            return Result.CreateError("インデックス修飾未実装");
+        }
+
         public override Result VisitDevice([NotNull] testParser.DeviceContext context)
         {
             var ident = context.IDENT();
@@ -138,6 +158,5 @@ namespace PlcSim
 
             return Result.CreateSuccess(device);
         }
-        #endregion
     }
 }

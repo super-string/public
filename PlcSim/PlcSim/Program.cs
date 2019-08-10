@@ -11,27 +11,23 @@ namespace PlcSim
             plc.BitDevices["R0"] = Plc.ON;
             plc.WordDevices["DM0"] = 10;
             plc.WordDevices["DM10"] = 0;
+            plc.WordDevices["DM11"] = 0;
 
             //実行前の結果
             plc.DisplayCurrentDevice();
-
+            Interpreter.Execute(plc, "LD R0\nMOV DM0 DM10:#1");
+            Interpreter.Execute(plc, "LD R0\nMOV DM0 DM10");
+#if false
             var ret = Interpreter.Execute(plc, "LD R0\nMOV DM0 DM10");
-            if(!ret.Success)
-            {
-                Console.WriteLine(ret.Message);
-                return;
-            }
-
-            //実行後の結果
-            plc.DisplayCurrentDevice();
-
-
             plc.BitDevices["R0"] = Plc.OFF;
+            plc.BitDevices["R1"] = Plc.ON;
             plc.WordDevices["DM0"] = 10;
             plc.WordDevices["DM10"] = 0;
 
-            plc.DisplayCurrentDevice();
-
+            ret = Interpreter.Execute(plc, "LD R0\nMOV DM0 DM10");
+            ret = Interpreter.Execute(plc, "LDB R0\nMOV DM0 DM10");
+            ret = Interpreter.Execute(plc, "LD R1\nOUT R0");
+#endif
         }
     }
 
@@ -39,12 +35,20 @@ namespace PlcSim
     {
         public static Result Execute(Plc plc, string mnemonic)
         {
+            Console.WriteLine("\ninput:\n" + mnemonic);
             var inputStream = new AntlrInputStream(mnemonic);
             var lexer = new testLexer(inputStream);
             var tokenStream = new CommonTokenStream(lexer);
             var parser = new testParser(tokenStream);
 
-            return (new Visitor(plc)).Visit(parser.input());
+            try
+            {
+                return (new Visitor(plc)).Visit(parser.input());
+            }
+            finally
+            {
+                plc.DisplayCurrentDevice();
+            }
         }
     }
 }
