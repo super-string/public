@@ -35,7 +35,7 @@ direct_value
 local: AT device;
 tm: SHARP device;
 indirect: ASTERISK (IDENT | index_ref | local);
-index_ref: ((UINT | IDENT) | local) COLON (DEC | SINT | UINT | IDENT);
+index_ref: (dev=(UINT | IDENT) | local) op=COLON ref=(DEC | SINT | UINT | IDENT);
 comment: COMMENT;
 
 UINT: DIGIT;
