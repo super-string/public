@@ -13,6 +13,7 @@ namespace PlcSim.Operand
             {"Y", new DevAttribute { Code = DeviceCode.R, Type = DevType.Bit} },
             {"DM", new DevAttribute { Code = DeviceCode.DM, Type = DevType.Word} },
             {"D", new DevAttribute { Code = DeviceCode.DM, Type = DevType.Word} },
+            {"Z", new DevAttribute { Code = DeviceCode.DM, Type = DevType.Word} },
         };
     }
 }

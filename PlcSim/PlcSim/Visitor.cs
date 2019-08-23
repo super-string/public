@@ -51,7 +51,7 @@ namespace PlcSim
 
         public override Result VisitMnemonic_inst([NotNull] testParser.Mnemonic_instContext context)
         {
-            // 命令後
+            // 命令語
             var instRet = Visit(context.inst());
             if (!instRet.Success) return instRet;
 
@@ -131,6 +131,7 @@ namespace PlcSim
             {
                 return Result.CreateError("解析できなかったデバイス:" + dev);
             }
+
             var @ref = context.@ref.Text.ToUpper();
             if (@ref.StartsWith("#") || @ref.StartsWith("k", System.StringComparison.InvariantCultureIgnoreCase))
             {
@@ -142,7 +143,14 @@ namespace PlcSim
                 device.Increment(indexValue);
                 return Result.CreateSuccess(device);
             }
-            return Result.CreateError("インデックス修飾未実装");
+            Device refDevice;
+            if (!Device.TryParse(@ref, out refDevice))
+            {
+                return Result.CreateError("解析できなかったデバイス:" + @ref);
+            }
+            var val = _plc.FindKey(refDevice);
+            device.Increment(_plc.WordDevices[val]);
+            return Result.CreateSuccess(device);
         }
 
         public override Result VisitDevice([NotNull] testParser.DeviceContext context)

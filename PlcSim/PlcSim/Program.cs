@@ -12,11 +12,12 @@ namespace PlcSim
             plc.WordDevices["DM0"] = 10;
             plc.WordDevices["DM10"] = 0;
             plc.WordDevices["DM11"] = 0;
+            plc.WordDevices["DM12"] = 100;
+            plc.WordDevices["Z1"] = 2;
 
             //実行前の結果
             plc.DisplayCurrentDevice();
-            Interpreter.Execute(plc, "LD R0\nMOV DM0 DM10:#1");
-            Interpreter.Execute(plc, "LD R0\nMOV DM0 DM10");
+            Interpreter.Execute(plc, "LD R0\nMOV DM0 DM10:Z1");
 #if false
             var ret = Interpreter.Execute(plc, "LD R0\nMOV DM0 DM10");
             plc.BitDevices["R0"] = Plc.OFF;
